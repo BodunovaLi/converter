@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Converter.Server/Converter.Server.csproj" Id="3bce7f5a-4d0d-454e-a75b-7bcb85881a0e" />
+  <Project Path="Converter.Tests/Converter.Tests.csproj" Id="8344978d-15de-4015-a91d-013f42a58611" />
+  <Project Path="Converter/Converter.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+</Solution>

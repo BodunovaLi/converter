@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Name="PageRoot"
+             x:Class="Converter.MainPage"
+             BackgroundColor="#1A2028"
+             Loaded="MainPage_Loaded">
+
+    <ScrollView>
+        <Grid Margin="40"
+              RowDefinitions="Auto,Auto"
+              RowSpacing="50">
+
+            <VerticalStackLayout Spacing="20">
+                <Label Text="Конвертер валют"
+                       TextColor="White"
+                       FontSize="40"
+                       FontAttributes="Bold" />
+                
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="#FF8080"
+                       FontSize="14"/>
+
+                <Grid x:Name="DateContainer">
+                    <DatePicker Date="{Binding SelectedDate, Mode=TwoWay}"
+                                DateSelected="RateDatePicker_DateSelected"
+                                Format="dd.MM.yyyy"
+                                TextColor="White"
+                                BackgroundColor="#3F494F"
+                                HorizontalOptions="Start"
+                                WidthRequest="300"
+                                MaximumWidthRequest="{Binding Width, Source={x:Reference DateContainer}}" />
+                </Grid>
+                <Label Text="{Binding ActualRateDate, StringFormat='Курсы на {0:dd.MM.yyyy}'}"
+                       TextColor="White"
+                       FontSize="12"
+                       Opacity="0.7">
+
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label"
+                     Binding="{Binding ActualRateDate}"
+                     Value="{x:Null}">
+                            <Setter Property="IsVisible" Value="False"/>
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+            </VerticalStackLayout>
+
+            <FlexLayout x:Name="ConverterLayout"
+                        Grid.Row="1"
+                        Direction="Row"
+                        Wrap="NoWrap"
+                        AlignItems="Center"
+                        JustifyContent="Center">
+
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="LayoutStates">
+                        <VisualState x:Name="Narrow">
+                            <VisualState.StateTriggers>
+                                <AdaptiveTrigger MinWindowWidth="0" />
+                            </VisualState.StateTriggers>
+                            <VisualState.Setters>
+                                <Setter Property="Direction" Value="Column" />
+
+                                <Setter TargetName="FromBlock" Property="FlexLayout.Basis" Value="Auto" />
+                                <Setter TargetName="FromBlock" Property="FlexLayout.Grow" Value="0" />
+                                <Setter TargetName="FromBlock" Property="FlexLayout.Shrink" Value="0" />
+                                <Setter TargetName="FromBlock" Property="FlexLayout.AlignSelf" Value="Stretch" />
+                                <Setter TargetName="FromBlock" Property="Grid.Margin" Value="0,0,0,20" />
+
+                                <Setter TargetName="SwapButton" Property="FlexLayout.Basis" Value="Auto" />
+                                <Setter TargetName="SwapButton" Property="ImageButton.Margin" Value="0,0,0,20" />
+
+                                <Setter TargetName="ToBlock" Property="FlexLayout.Basis" Value="Auto" />
+                                <Setter TargetName="ToBlock" Property="FlexLayout.Grow" Value="0" />
+                                <Setter TargetName="ToBlock" Property="FlexLayout.Shrink" Value="0" />
+                                <Setter TargetName="ToBlock" Property="FlexLayout.AlignSelf" Value="Stretch" />
+                            </VisualState.Setters>
+                        </VisualState>
+
+                     
+                        <VisualState x:Name="Wide">
+                            <VisualState.StateTriggers>
+                                <AdaptiveTrigger MinWindowWidth="850" />
+                            </VisualState.StateTriggers>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+
+                <Grid x:Name="FromBlock"
+                      RowSpacing="20"
+                      FlexLayout.Basis="300"
+                      FlexLayout.Grow="1"
+                      FlexLayout.AlignSelf="Start"
+                      Margin="0,0,20,20"
+                      RowDefinitions="Auto,44"
+                      ZIndex="10">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="У меня есть"
+                               TextColor="White"
+                               Opacity="0.7" />
+
+                        <Border StrokeShape="RoundRectangle 8"
+                                BackgroundColor="#3F494F"
+                                StrokeThickness="0">
+                            <Grid ColumnDefinitions="*,*,*,*,*"
+                                  ColumnSpacing="2"
+                                  BackgroundColor="#30383D">
+                                <Button Command="{Binding SelectFromCurrencyCommand}"
+                                        CommandParameter="RUB"
+                                        Grid.Column="0" Text="RUB"
+                                        TextColor="White"
+                                        CornerRadius="0"
+                                        Padding="6,0"
+                                        HeightRequest="44"
+                                        MinimumWidthRequest="0"
+                                        BackgroundColor="#3F494F">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button"
+                                                         Binding="{Binding FromCurrency}"
+                                                         Value="RUB">
+                                            <Setter Property="BackgroundColor" Value="#506D9D"/>
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+
+                                <Button Command="{Binding SelectFromCurrencyCommand}"
+                                        CommandParameter="USD"
+                                        Grid.Column="1" Text="USD"
+                                        TextColor="White"
+                                        CornerRadius="0"
+                                        Padding="6,0"
+                                        HeightRequest="44"
+                                        MinimumWidthRequest="0"
+                                        BackgroundColor="#3F494F">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button"
+                                                         Binding="{Binding FromCurrency}"
+                                                         Value="USD">
+                                            <Setter Property="BackgroundColor" Value="#506D9D"/>
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+
+                                <Button Command="{Binding SelectFromCurrencyCommand}"
+                                        CommandParameter="EUR"
+                                        Grid.Column="2" Text="EUR"
+                                        TextColor="White"
+                                        CornerRadius="0"
+                                        Padding="6,0"
+                                        HeightRequest="44"
+                                        MinimumWidthRequest="0"
+                                        BackgroundColor="#3F494F">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button"
+                                                         Binding="{Binding FromCurrency}"
+                                                         Value="EUR">
+                                            <Setter Property="BackgroundColor" Value="#506D9D"/>
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+
+                                <Button Command="{Binding SelectFromCurrencyCommand}"
+                                        Text="{Binding FromExtraCurrency}"
+                                        CommandParameter="{Binding FromExtraCurrency}"
+                                        Grid.Column="3" 
+                                        TextColor="White"
+                                        CornerRadius="0"
+                                        Padding="6,0"
+                                        HeightRequest="44"
+                                        MinimumWidthRequest="0"
+                                        BackgroundColor="#3F494F">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button"
+                                                     Binding="{Binding IsFromExtraCurrencySelected}"
+                                                     Value="True">
+                                            <Setter Property="BackgroundColor" Value="#506D9D"/>
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+
+                                <Button Command="{Binding ToggleFromCurrencyListCommand}"
+                                        Grid.Column="4" Text="⌄"
+                                        TextColor="White"
+                                        CornerRadius="0"
+                                        Padding="6,0"
+                                        HeightRequest="44"
+                                        MinimumWidthRequest="0"
+                                        BackgroundColor="#3F494F" />
+                            </Grid>
+                           
+                        </Border>
+
+                    </VerticalStackLayout>
+
+                    <Entry Text="{Binding FromAmount, Mode=TwoWay}"
+                           Grid.Row="1"
+                           Placeholder="Введите сумму"
+                           BackgroundColor="#D9D9D9"
+                           TextColor="Black"
+                           PlaceholderColor="#6E6E6E" 
+                           HeightRequest="44"
+                           VerticalOptions="Start"/>
+                    <CollectionView Grid.Row="1"
+                                    ZIndex="1"
+                                    ItemsSource="{Binding AvailableCurrencies}"
+                                    IsVisible="{Binding IsFromCurrencyListVisible}"
+                                    HeightRequest="180"
+                                    VerticalOptions="Start"
+                                    BackgroundColor="#3F494F"
+                                    SelectionMode="None"
+                                    MaximumWidthRequest="{Binding Width, Source={x:Reference FromBlock}}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding Name}"
+                                           TextColor="White"
+                                           FontSize="14"
+                                           Padding="8"
+                                           LineBreakMode="TailTruncation">
+
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                            Command="{Binding BindingContext.SelectFromCurrencyCommand,
+                                            Source={x:Reference PageRoot}}"
+                                            CommandParameter="{Binding CharCode}"/>
+                                    </Label.GestureRecognizers>
+                                </Label>
+
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+                </Grid>
+
+                <ImageButton x:Name="SwapButton"
+                             Command="{Binding SwapCurrenciesCommand}"
+                             Source="arrows.png"
+                             BackgroundColor="Transparent"
+                             WidthRequest="64"
+                             HeightRequest="64"
+                             MinimumWidthRequest="64"
+                             MinimumHeightRequest="64"
+                             Padding="0"
+                             Aspect="AspectFit"
+                             FlexLayout.Basis="64"
+                             FlexLayout.Shrink="0"
+                             FlexLayout.AlignSelf="Center"
+                             Margin="0,0,20,20" />
+
+                <Grid x:Name="ToBlock"
+                      RowSpacing="20"
+                      FlexLayout.Basis="300"
+                      FlexLayout.Grow="1"
+                      FlexLayout.AlignSelf="Start"
+                      RowDefinitions="Auto,44"
+                      Margin="0,0,0,20">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Хочу приобрести"
+                               TextColor="White"
+                               Opacity="0.7" />
+
+                        <Border StrokeShape="RoundRectangle 8"
+                                BackgroundColor="#3F494F"
+                                StrokeThickness="0">
+                            <Grid ColumnDefinitions="*,*,*,*,*"
+                                  ColumnSpacing="2"
+                                  BackgroundColor="#30383D">
+                                <Button Command="{Binding SelectToCurrencyCommand}"
+                                       CommandParameter="RUB"
+                                       Grid.Column="0" Text="RUB"
+                                       TextColor="White"
+                                       CornerRadius="0"
+                                       Padding="6,0"
+                                       HeightRequest="44"
+                                       MinimumWidthRequest="0"
+                                       BackgroundColor="#3F494F">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button"
+                                                         Binding="{Binding ToCurrency}"
+                                                         Value="RUB">
+                                            <Setter Property="BackgroundColor" Value="#506D9D"/>
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+
+
+                                <Button Command="{Binding SelectToCurrencyCommand}"
+                                       CommandParameter="USD"
+                                       Grid.Column="1" Text="USD"
+                                       TextColor="White"
+                                       CornerRadius="0"
+                                       Padding="6,0"
+                                       HeightRequest="44"
+                                       MinimumWidthRequest="0"
+                                       BackgroundColor="#3F494F">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button"
+                                                         Binding="{Binding ToCurrency}"
+                                                         Value="USD">
+                                            <Setter Property="BackgroundColor" Value="#506D9D"/>
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+
+                                <Button Command="{Binding SelectToCurrencyCommand}"
+                                       CommandParameter="EUR"
+                                       Grid.Column="2" Text="EUR"
+                                       TextColor="White"
+                                       CornerRadius="0"
+                                       Padding="6,0"
+                                       HeightRequest="44"
+                                       MinimumWidthRequest="0"
+                                       BackgroundColor="#3F494F">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button"
+                                                         Binding="{Binding ToCurrency}"
+                                                         Value="EUR">
+                                            <Setter Property="BackgroundColor" Value="#506D9D"/>
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+
+                                <Button Command="{Binding SelectToCurrencyCommand}"
+                                       Text="{Binding ToExtraCurrency}"
+                                       CommandParameter="{Binding ToExtraCurrency}"
+                                       Grid.Column="3" 
+                                       TextColor="White"
+                                       CornerRadius="0"
+                                       Padding="6,0"
+                                       HeightRequest="44"
+                                       MinimumWidthRequest="0"
+                                       BackgroundColor="#3F494F">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button"
+                                                     Binding="{Binding IsToExtraCurrencySelected}"
+                                                     Value="True">
+                                            <Setter Property="BackgroundColor" Value="#506D9D"/>
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+
+                                <Button Command="{Binding ToggleToCurrencyListCommand}"
+                                        Grid.Column="4" Text="⌄"
+                                        TextColor="White"
+                                        CornerRadius="0"
+                                        Padding="6,0"
+                                        HeightRequest="44"
+                                        MinimumWidthRequest="0"
+                                        BackgroundColor="#3F494F" />
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <Entry Text="{Binding ToAmount, Mode=TwoWay}"
+                           Grid.Row="1"
+                           Placeholder="Введите сумму"
+                           BackgroundColor="#D9D9D9"
+                           TextColor="Black"
+                           PlaceholderColor="#6E6E6E" 
+                           HeightRequest="44"
+                           VerticalOptions="Start"/>
+                    <CollectionView Grid.Row="1"
+                                    ZIndex="1"
+                                    ItemsSource="{Binding AvailableCurrencies}"
+                                    IsVisible="{Binding IsToCurrencyListVisible}"
+                                    HeightRequest="180"
+                                    VerticalOptions="Start"
+                                    BackgroundColor="#3F494F"
+                                    SelectionMode="None"
+                                    MaximumWidthRequest="{Binding Width, Source={x:Reference ToBlock}}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding Name}"
+                                           TextColor="White"
+                                           FontSize="14"
+                                           Padding="8"
+                                           LineBreakMode="TailTruncation">
+
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                            Command="{Binding BindingContext.SelectToCurrencyCommand,
+                                            Source={x:Reference PageRoot}}"
+                                            CommandParameter="{Binding CharCode}"/>
+                                    </Label.GestureRecognizers>
+                                </Label>
+
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+                </Grid>
+            </FlexLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

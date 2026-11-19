@@ -1,0 +1,14 @@
+# Настройки Visual Studio
+.vs/
+*.user
+*.suo
+
+# Результаты сборки
+**/bin/
+**/obj/
+
+# Результаты тестов
+**/TestResults/
+*.trx
+*.coverage
+*.coveragexml
